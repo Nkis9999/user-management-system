@@ -1,0 +1,43 @@
+<form action="/search">
+
+<input name="keyword">
+
+<button>搜尋</button>
+
+</form>
+
+<h2>會員列表</h2>
+
+總會員數：
+
+<span th:text="${total}"></span>
+
+<table border="1">
+
+<tr>
+<th>ID</th>
+<th>帳號</th>
+<th>Email</th>
+</tr>
+
+<tr th:each="u:${users}">
+
+<td th:text="${u.id}"></td>
+
+<td th:text="${u.username}"></td>
+
+<td th:text="${u.email}"></td>
+
+</tr>
+
+</table>
+
+<br>
+
+<a th:href="@{/users(page=${page-1})}">
+上一頁
+</a>
+
+<a th:href="@{/users(page=${page+1})}">
+下一頁
+</a>

@@ -29,17 +29,29 @@ public class LoginController {
     }
 
     // 處理登入
-    @PostMapping("/login")
-    public String loginAction(@ModelAttribute UserVo userVo) {
-    	
-    	boolean isLogin = loginService.checkLogin(userVo);
-    	
-    	if(isLogin) {
-    		return "loginSuccess";
-    	}else {
-    		return "loginFail";
-    	}
+    @PostMapping("/doLogin")
+    public String login(UserVo userVo){
+
+        boolean result =
+            loginService.checkLogin(userVo);
+
+        if(result){
+            return "loginSuccess";
+        }
+
+        return "redirect:/login?error";
     }
+//    @PostMapping("/login")
+//    public String loginAction(@ModelAttribute UserVo userVo) {
+//    	
+//    	boolean isLogin = loginService.checkLogin(userVo);
+//    	
+//    	if(isLogin) {
+//    		return "redirect:/users";
+//    	}else {
+//    		return "redirect:/login";
+//    	}
+//    }
 
     // 顯示註冊頁
     @GetMapping("/register")
