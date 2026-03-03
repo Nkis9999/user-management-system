@@ -50,7 +50,7 @@ public class LoginController {
         	
         	session.setAttribute("loginUser" , userVo.getUsername());
             
-        	session.setAttribute("loginTime", new java.util.Date());
+        	session.setAttribute("loginTime", System.currentTimeMillis());
         	
         	return "loginSuccess";
         }

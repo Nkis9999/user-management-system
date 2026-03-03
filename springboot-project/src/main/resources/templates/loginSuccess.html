@@ -11,10 +11,11 @@
 <p>
 
 登入時間；
-<span th:text=
-"${#dates.format(session.loginTime,
-'yyyy-MM-dd HH:mm:ss')}">
-</span>
+<span id="timer"></span>
+<!--<span th:text=-->
+<!--"${#dates.format(session.loginTime,-->
+<!--'yyyy-MM-dd HH:mm:ss')}">-->
+<!--</span>-->
 
 </p>	
 <p>
@@ -39,6 +40,34 @@
 <form action="/logout" method="post">
 	<button type="submit">登出</button>	
 </form>
+
+<script th:inline="javascript">
+
+let loginTime = /*[[${session.loginTime}]]*/ 0;
+
+function updateTimer(){
+
+    let now = new Date().getTime();
+
+    let diff = now - loginTime;
+
+    let totalSeconds = Math.floor(diff/1000);
+
+    let h = Math.floor(totalSeconds/3600);
+    let m = Math.floor((totalSeconds%3600)/60);
+    let s = totalSeconds%60;
+
+    document.getElementById("timer").innerHTML =
+        h.toString().padStart(2,'0') + ":" +
+        m.toString().padStart(2,'0') + ":" +
+        s.toString().padStart(2,'0');
+}
+
+setInterval(updateTimer,1000);
+
+updateTimer();
+
+</script>
 
 </body>
 </html>
