@@ -1,6 +1,7 @@
 package com.course.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,9 @@ public class ProfileController {
 	
 	@Autowired
 	UsersRepository usersRepository;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@GetMapping("/profile")
 	public String profile(HttpSession session,
@@ -56,21 +60,54 @@ public class ProfileController {
 		return "redirect:/profile?success=true";
 	}
 	
-	
-//	@GetMapping("/profile")
-//	public String profile(HttpSession session ,Model model){
-//		
-//		String username = (String)session.getAttribute("loginUser");
-//		
-//		if(username == null) {
-//			return "redirect:/login";
-//		}
-//		
-//		UsersEntity user = usersRepository.findByUsername(username);
-//		
-//		model.addAttribute("username",username);
-//		
-//		return "profile";
-//	}
+	@PostMapping("/changePassword")
+	public String changePassword(
+			String oldPassword, 
+			String newPassword,
+			String confirmPassword,
+			HttpSession session,
+			Model model) {
+		
+		String username = (String)session.getAttribute("loginUser");
+		
+		UsersEntity user = usersRepository.findByUsername(username);
+		
+		// 驗證舊密碼
+	    if(!passwordEncoder.matches(
+	            oldPassword,
+	            user.getPassword())){
+
+	        model.addAttribute("error",
+	                "舊密碼錯誤!");
+
+	        model.addAttribute("user", user);
+
+	        return "profile";
+	    }
+
+	    // 驗證新密碼一致
+	    if(!newPassword.equals(confirmPassword)){
+
+	        model.addAttribute("error",
+	                "兩次密碼不一致!");
+
+	        model.addAttribute("user", user);
+
+	        return "profile";
+	    }
+
+	    // 更新密碼
+	    user.setPassword(
+	        passwordEncoder.encode(newPassword));
+
+	    usersRepository.save(user);
+
+	    model.addAttribute("success",
+	            "密碼修改成功!");
+
+	    model.addAttribute("user", user);
+
+	    return "profile";
+	}
 	
 }
