@@ -7,14 +7,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.course.entity.UsersEntity;
 import com.course.model.UserVo;
+import com.course.repository.UsersRepository;
 import com.course.service.LoginService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class LoginController {
 
     @Autowired
     private LoginService loginService;
+    
+    @Autowired
+    private UsersRepository usersRepository;
 
     // 首頁轉導到 login
     @GetMapping("/")
@@ -30,12 +37,14 @@ public class LoginController {
 
     // 處理登入
     @PostMapping("/doLogin")
-    public String login(UserVo userVo){
+    public String login(UserVo userVo , HttpSession session){
 
         boolean result =
             loginService.checkLogin(userVo);
 
         if(result){
+        	
+        	session.setAttribute("loginUser" , userVo.getUsername());
             return "loginSuccess";
         }
 
@@ -72,5 +81,29 @@ public class LoginController {
         	model.addAttribute("error","此帳號已註冊過");
             return "register";
         }
+    }
+    
+    // 建立個人資料頁
+//    @GetMapping("/profile")
+//    public String profile(HttpSession session , Model model) {
+//    	
+//    	String username = (String)session.getAttribute("loginUser");
+//    	
+//    	UsersEntity user = usersRepository.findByUsername(username);
+//    	
+//    	model.addAttribute("user" , user);
+//    	
+//    	return "profile";
+//    	
+//    }
+    
+    // 更新資料功能
+    public String updateProfile(UserVo userVo , HttpSession session) {
+    	
+    	String username = (String)session.getAttribute("loginUser");
+    	
+    	loginService.updateUser(username , userVo);
+    	
+    	return "redirect:/profile";
     }
 }

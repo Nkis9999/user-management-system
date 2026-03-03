@@ -91,4 +91,16 @@ public class LoginService {
 	    return true;
 	}
 
+	// 更新資料功能
+	public void updateUser(String username , UserVo userVo) {
+		
+		UsersEntity user = usersRepository.findByUsername(username);
+		
+		user.setEmail(userVo.getEmail());
+		
+		usersRepository.save(user);
+		
+	}
+	
+	
 }

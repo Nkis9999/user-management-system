@@ -14,24 +14,26 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http)
             throws Exception {
 
-        http
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers(
-                    "/",
-                    "/login",
-                    "/doLogin",
-                    "/registerPage",
-                    "/register",
-                    "/css/**",
-                    "/js/**"
-            ).permitAll()
-            .anyRequest().authenticated()
-        )
-        .formLogin(form -> form
-            .loginPage("/login")
-            .loginProcessingUrl("/login")
-            .defaultSuccessUrl("/loginSuccess", true)
-            .permitAll()
+    	http
+    	.authorizeHttpRequests(auth -> auth
+                .anyRequest().permitAll()
+            )
+//        .authorizeHttpRequests(auth -> auth
+//            .requestMatchers(
+//                    "/",
+//                    "/login",
+//                    "/doLogin",
+//                    "/registerPage",
+//                    "/register",
+//                    "/css/**",
+//                    "/js/**"
+//            ).permitAll().anyRequest()
+//        )
+        .formLogin(form -> form.disable()
+//            .loginPage("/login")
+//            .loginProcessingUrl("/login")
+//            .defaultSuccessUrl("/loginSuccess", true)
+//            .permitAll()
         )
         .csrf(csrf -> csrf.disable());
 
