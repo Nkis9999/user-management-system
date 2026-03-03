@@ -24,7 +24,7 @@ public class UserService {
 		
 	}
 	
-	public Page<UserEntity> searchUsers(String keyword , int page){
+	public Page<UsersEntity> searchUsers(String keyword , int page){
 		
 		Pageable pageable = PageRequest.of(page, 5);
 		

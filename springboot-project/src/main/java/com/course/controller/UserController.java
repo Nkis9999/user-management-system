@@ -1,5 +1,7 @@
 package com.course.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -8,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.course.entity.UsersEntity;
-import com.course.model.UserEntity;
 import com.course.repository.UsersRepository;
 import com.course.service.UserService;
 
@@ -24,12 +25,37 @@ public class UserController {
     @GetMapping("/users")
     public String users(
             Model model,
-            @RequestParam(defaultValue="0")
-            int page){
+            @RequestParam(defaultValue="0") int page,
+            @RequestParam(required=false) String keyword){
 
-        Page<UsersEntity> userPage =
-        userService.getUsers(page);
+        Page<UsersEntity> userPage;
 
+        if(keyword == null || keyword.isEmpty()){
+
+            userPage =
+                userService.getUsers(page);
+
+        }else{
+
+            userPage =
+                userService.searchUsers(keyword,page);
+        }
+
+        // 限制 page 不超過最大頁數
+        if(page >= userPage.getTotalPages()) {
+        	page = userPage.getTotalPages() - 1;
+        	
+        	if(page < 0) {
+        		page = 0;
+        	}
+        	
+        	if(keyword == null || keyword.isEmpty()) {
+        		userPage = userService.getUsers(page);
+        	}else {
+        		userPage = userService.searchUsers(keyword, page);
+        	}
+        }
+        
         model.addAttribute("users",
                 userPage.getContent());
 
@@ -39,19 +65,12 @@ public class UserController {
         model.addAttribute("page",
                 page);
 
+        model.addAttribute("keyword",
+                keyword);
+        
+        model.addAttribute("totalPages" , userPage.getTotalPages());
+
         return "users";
     }
 
-    @GetMapping("/search")
-    public String search(String keyword , Model model) {
-    	
-    	Page<UserEntity> userPage = userService.searchUsers(keyword, 0);
-    	
-    	model.addAttribute("users" , userPage.getContent());
-    	
-    	return "users";
-    }
-    
-    
-    
 }

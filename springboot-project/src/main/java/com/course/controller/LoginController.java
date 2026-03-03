@@ -50,6 +50,11 @@ public class LoginController {
 
         return "redirect:/login?error";
     }
+    
+    @GetMapping("/loginSuccess")
+    public String loginSuccess() {
+    	return "loginSuccess";
+    }
 //    @PostMapping("/login")
 //    public String loginAction(@ModelAttribute UserVo userVo) {
 //    	

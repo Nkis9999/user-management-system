@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.course.entity.UsersEntity;
 import com.course.repository.UsersRepository;
@@ -34,6 +36,26 @@ public class ProfileController {
 
 	    return "profile";
 	}
+	
+	@PostMapping("/updateProfile")
+	public String updateProfile(@RequestParam String username ,@RequestParam String email ,HttpSession session) {
+		
+		// 取得目前登入者
+		String loginUser = (String)session.getAttribute("loginUser");
+		
+		UsersEntity user = usersRepository.findByUsername(loginUser);
+		
+		// 更新資料
+		user.setUsername(username);
+		user.setEmail(email);
+		
+		usersRepository.save(user);
+		
+		// 更新 session
+		session.setAttribute("loginUser", username);
+		return "redirect:/profile?success=true";
+	}
+	
 	
 //	@GetMapping("/profile")
 //	public String profile(HttpSession session ,Model model){

@@ -1,16 +1,38 @@
-<form action="/search">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 
-<input name="keyword">
+<head>
+<meta charset="UTF-8">
+<title>會員列表</title>
+</head>
 
-<button>搜尋</button>
-
-</form>
+<body>
 
 <h2>會員列表</h2>
 
-總會員數：
+<a href="/loginSuccess">
+<button>← 回登入成功頁</button>
+</a>
 
-<span th:text="${total}"></span>
+<br><br>
+
+<form action="/users" method="get">
+
+搜尋會員：
+
+<input type="text"
+       name="keyword"
+       th:value="${keyword}">
+
+<button type="submit">
+
+搜尋
+
+</button>
+
+</form>
+
+<br><br>
 
 <table border="1">
 
@@ -20,13 +42,13 @@
 <th>Email</th>
 </tr>
 
-<tr th:each="u:${users}">
+<tr th:each="user : ${users}">
 
-<td th:text="${u.id}"></td>
+<td th:text="${user.id}"></td>
 
-<td th:text="${u.username}"></td>
+<td th:text="${user.username}"></td>
 
-<td th:text="${u.email}"></td>
+<td th:text="${user.email}"></td>
 
 </tr>
 
@@ -34,10 +56,25 @@
 
 <br>
 
-<a th:href="@{/users(page=${page-1})}">
-上一頁
-</a>
+<p>
 
-<a th:href="@{/users(page=${page+1})}">
-下一頁
-</a>
+會員總數：
+
+<span th:text="${total}"></span>
+<br>
+
+<div>
+
+	<a th:if="${page > 0}"
+		th:href="@{/users(page=${page-1},keyword=${keyword})}">上一頁</a>
+		
+|
+
+<a th:if="${page < totalPages-1}"
+   th:href="@{/users(page=${page+1},keyword=${keyword})}">下一頁</a>
+
+</div>
+</p>
+
+</body>
+</html>
