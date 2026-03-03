@@ -26,6 +26,12 @@
 <div class="card shadow-lg p-4 login-card">
     <h3 class="text-center mb-4">會員登入</h3>
 	
+	<div th:if="${param.resetSuccess}"
+		 id="msg"	
+	     class="alert alert-success">
+		密碼重設成功
+	</div>
+			
 	<!--密碼修改成功-->
 	<div th:if="${param.pwdSuccess}" 
 		 id="pwdMsg"
@@ -69,30 +75,26 @@
 	<div class="text-center mt-2">
 		<a th:href="@{/forgotPassword}">忘記密碼?</a>
 	</div>
-	<div th:if="${param.resetSuccess}"
-	     class="alert alert-success">
-	 密碼重設成功
-	</div>
 	
 </div>
-
 <script>
 
 setTimeout(function(){
 
-	let logoutMsg = document.getElementById("logoutMsg");
-	  if(logoutMsg){
-	      logoutMsg.style.display = "none";
-	  }
+    let messages = ["msg","pwdMsg","logoutMsg"];
 
-	  let pwdMsg = document.getElementById("pwdMsg");
-	  if(pwdMsg){
-	      pwdMsg.style.display = "none";
-	  }
+    messages.forEach(function(id){
 
-},2000);
+        let el = document.getElementById(id);
+
+        if(el){
+            el.style.display = "none";
+        }
+
+    });
+
+},3000);
 
 </script>
-
 </body>
 </html>

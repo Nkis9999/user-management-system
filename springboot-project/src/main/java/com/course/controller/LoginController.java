@@ -69,7 +69,7 @@ public class LoginController {
     	return "forgotPassword";
     }
     
-    @PostMapping("/")
+    @PostMapping("/forgotPassword")
     public String forgotPassword(String username , Model model) {
     	
     	UsersEntity user = usersRepository.findByUsername(username);
