@@ -1,6 +1,7 @@
 package com.course.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,39 +41,42 @@ public class LoginController {
     }
 
     // 處理登入
-    @PostMapping("/doLogin")
-    public String login(UserVo userVo , HttpSession session){
-
-        boolean result =
-            loginService.checkLogin(userVo);
-
-        if(result){
-        	
-        	UsersEntity user = usersRepository.findByUsername(userVo.getUsername());
-        	
-        	session.setAttribute("loginUser" , user);
-            
-        	session.setAttribute("loginTime", System.currentTimeMillis());
-        	
-        	return "redirect:/loginSuccess";
-        }
-
-        return "redirect:/login?error";
-    }
+//    @PostMapping("/doLogin")
+//    public String login(UserVo userVo , HttpSession session){
+//
+//        boolean result =
+//            loginService.checkLogin(userVo);
+//
+//        if(result){
+//        	
+//        	UsersEntity user = usersRepository.findByUsername(userVo.getUsername());
+//        	
+//        	session.setAttribute("loginUser" , user);
+//            
+//        	session.setAttribute("loginTime", System.currentTimeMillis());
+//        	
+//        	return "redirect:/loginSuccess";
+//        }
+//
+//        return "redirect:/login?error";
+//    }
     
     @GetMapping("/loginSuccess")
-    public String loginSuccess(HttpSession session , Model model) {
-    	
-    	UsersEntity user = (UsersEntity)session.getAttribute("loginUser");
-    	
-    	if(user != null) {
-    		
-    		model.addAttribute("role" , user.getRole());
-    		
-    		model.addAttribute("username" , user.getUsername());
-    	}
-    	
-    	return "loginSuccess";
+    public String loginSuccess(Model model,
+                               Authentication authentication) {
+
+        String username = authentication.getName();
+
+        UsersEntity user =
+                usersRepository.findByUsername(username);
+
+        model.addAttribute("username", username);
+        model.addAttribute("role", user.getRole());
+
+        model.addAttribute("loginTime",
+                System.currentTimeMillis());
+
+        return "loginSuccess";
     }
 
     // 忘記密碼

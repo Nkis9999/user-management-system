@@ -56,7 +56,7 @@ color:#1cc88a;
 
 歡迎登入：
 
-<b th:text="${session.loginUser.username}"></b>
+<b th:text="${username}"></b>
 
 </p>
 
@@ -85,7 +85,7 @@ color:#1cc88a;
 
 <script th:inline="javascript">
 
-let loginTime = /*[[${session.loginTime}]]*/ 0;
+let loginTime = /*[[${loginTime}]]*/ 0;
 
 function updateTimer(){
 

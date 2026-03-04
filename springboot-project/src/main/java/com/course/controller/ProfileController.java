@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,129 +16,133 @@ import org.springframework.web.multipart.MultipartFile;
 import com.course.entity.UsersEntity;
 import com.course.repository.UsersRepository;
 
-import jakarta.servlet.http.HttpSession;
-
 @Controller
 public class ProfileController {
-	
-	@Autowired
-	UsersRepository usersRepository;
-	
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-	
-	@GetMapping("/profile")
-	public String profile(HttpSession session,
-	                      Model model){
 
-		UsersEntity user = (UsersEntity) session.getAttribute("loginUser");
-		
-		if(user == null) {
-			return "redirect:/login";
-		}
-		
-		model.addAttribute("user" , user);
-		
-		return "profile";
-	}
-	
-	@PostMapping("/updateProfile")
-	public String updateProfile(
-	        @RequestParam String username,
-	        @RequestParam String email,
-	        @RequestParam("photo") MultipartFile photo,
-	        HttpSession session) throws IOException {
+    @Autowired
+    UsersRepository usersRepository;
 
-		UsersEntity user = (UsersEntity)session.getAttribute("loginUser");
-		
-	    user.setUsername(username);
-	    user.setEmail(email);
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-	    // 上傳圖片
-	    if(photo != null && !photo.isEmpty()){
+    // 個人資料頁
+    @GetMapping("/profile")
+    public String profile(Authentication authentication,
+                          Model model){
 
-	        String fileName =
-	            photo.getOriginalFilename();
+        String username =
+                authentication.getName();
 
-	        String path = "C:\\upload\\";
+        UsersEntity user =
+                usersRepository.findByUsername(username);
 
-	        File dir = new File(path);
+        model.addAttribute("user", user);
 
-	        if(!dir.exists()){
-	            dir.mkdirs();
-	        }
+        return "profile";
+    }
 
-	        photo.transferTo(
-	            new File(path + fileName));
+    // 更新資料
+    @PostMapping("/updateProfile")
+    public String updateProfile(
+            Authentication authentication,
+            @RequestParam String username,
+            @RequestParam String email,
+            @RequestParam("photo") MultipartFile photo)
+            throws IOException {
 
-	        user.setImgName(fileName);
-	    }
+        String loginUsername =
+                authentication.getName();
 
-	    usersRepository.save(user);
+        UsersEntity user =
+                usersRepository.findByUsername(loginUsername);
 
-	    session.setAttribute("loginUser", user);
+        user.setUsername(username);
+        user.setEmail(email);
 
-	    return "redirect:/profile?success=true";
-	}
-		
-	@PostMapping("/changePassword")
-	public String changePassword(
-			String oldPassword, 
-			String newPassword,
-			String confirmPassword,
-			HttpSession session,
-			Model model) {
-		
-		UsersEntity user = (UsersEntity)session.getAttribute("loginUser");
-		
-		// 驗證舊密碼
-	    if(!passwordEncoder.matches(
-	            oldPassword,
-	            user.getPassword())){
+        // 上傳圖片
+        if(photo != null && !photo.isEmpty()){
 
-	        model.addAttribute("error",
-	                "舊密碼錯誤!");
+            String fileName =
+                    photo.getOriginalFilename();
 
-	        model.addAttribute("user", user);
+            String path = "C:\\upload\\";
 
-	        return "profile";
-	    }
+            File dir = new File(path);
 
-	    // 驗證新密碼一致
-	    if(!newPassword.equals(confirmPassword)){
+            if(!dir.exists()){
+                dir.mkdirs();
+            }
 
-	        model.addAttribute("error",
-	                "兩次密碼不一致!");
+            photo.transferTo(
+                    new File(path + fileName));
 
-	        model.addAttribute("user", user);
+            user.setImgName(fileName);
+        }
 
-	        return "profile";
-	    }
+        usersRepository.save(user);
 
-	    // 更新密碼
-	    user.setPassword(
-	        passwordEncoder.encode(newPassword));
+        return "redirect:/profile?success=true";
+    }
 
-	    usersRepository.save(user);
+    // 修改密碼
+    @PostMapping("/changePassword")
+    public String changePassword(
+            Authentication authentication,
+            String oldPassword,
+            String newPassword,
+            String confirmPassword,
+            Model model) {
 
-	    // 清除登入狀態
-	    session.invalidate();
+        String username =
+                authentication.getName();
 
-	    // 跳回登入頁並帶成功訊息
-	    return "redirect:/login?pwdSuccess=true";
-	}
-	
-	// 刪除帳號
-	@PostMapping("/deleteAccount")
-	public String deleteAccount(HttpSession session) {
-		
-		UsersEntity user = (UsersEntity)session.getAttribute("loginUser");
-		
-		usersRepository.delete(user);
-		
-		session.invalidate();
-		
-		return "redirect:/login?deleteSuccess=true";
-	}
-	
+        UsersEntity user =
+                usersRepository.findByUsername(username);
+
+        // 驗證舊密碼
+        if(!passwordEncoder.matches(
+                oldPassword,
+                user.getPassword())){
+
+            model.addAttribute("error",
+                    "舊密碼錯誤!");
+
+            model.addAttribute("user", user);
+
+            return "profile";
+        }
+
+        // 驗證新密碼
+        if(!newPassword.equals(confirmPassword)){
+
+            model.addAttribute("error",
+                    "兩次密碼不一致!");
+
+            model.addAttribute("user", user);
+
+            return "profile";
+        }
+
+        user.setPassword(
+                passwordEncoder.encode(newPassword));
+
+        usersRepository.save(user);
+
+        return "redirect:/login?pwdSuccess=true";
+    }
+
+    // 刪除帳號
+    @PostMapping("/deleteAccount")
+    public String deleteAccount(Authentication authentication) {
+
+        String username =
+                authentication.getName();
+
+        UsersEntity user =
+                usersRepository.findByUsername(username);
+
+        usersRepository.delete(user);
+
+        return "redirect:/login?deleteSuccess=true";
+    }
 }
