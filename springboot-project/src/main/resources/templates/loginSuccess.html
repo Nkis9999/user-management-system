@@ -38,9 +38,11 @@ color:#1cc88a;
 
 <h3 class="mb-3">登入成功</h3>
 
-<p>
+<div th:if="${param.noAuth}" style="color:red; margin:10px; font-weight:bold;">
+	❌ 沒有權限存取此頁面
+</div>
 
-登入時間
+<p>登入時間
 
 <br>
 
@@ -54,7 +56,7 @@ color:#1cc88a;
 
 歡迎登入：
 
-<b th:text="${session.loginUser}"></b>
+<b th:text="${session.loginUser.username}"></b>
 
 </p>
 
@@ -64,9 +66,11 @@ color:#1cc88a;
 個人資料
 </a>
 
+<div th:if="${role == 'ADMIN' || role=='SUPER_ADMIN' }">
 <a href="/users" class="btn btn-info w-100 mb-2">
 會員列表
 </a>
+</div>
 
 <form action="/logout" method="post">
 

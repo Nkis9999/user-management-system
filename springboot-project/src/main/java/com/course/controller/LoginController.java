@@ -48,18 +48,30 @@ public class LoginController {
 
         if(result){
         	
-        	session.setAttribute("loginUser" , userVo.getUsername());
+        	UsersEntity user = usersRepository.findByUsername(userVo.getUsername());
+        	
+        	session.setAttribute("loginUser" , user);
             
         	session.setAttribute("loginTime", System.currentTimeMillis());
         	
-        	return "loginSuccess";
+        	return "redirect:/loginSuccess";
         }
 
         return "redirect:/login?error";
     }
     
     @GetMapping("/loginSuccess")
-    public String loginSuccess() {
+    public String loginSuccess(HttpSession session , Model model) {
+    	
+    	UsersEntity user = (UsersEntity)session.getAttribute("loginUser");
+    	
+    	if(user != null) {
+    		
+    		model.addAttribute("role" , user.getRole());
+    		
+    		model.addAttribute("username" , user.getUsername());
+    	}
+    	
     	return "loginSuccess";
     }
 

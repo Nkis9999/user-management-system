@@ -30,19 +30,15 @@ public class ProfileController {
 	public String profile(HttpSession session,
 	                      Model model){
 
-	    String username =
-	        (String) session.getAttribute("loginUser");
-
-	    System.out.println("Session username=" + username);
-
-	    UsersEntity user =
-	        usersRepository.findByUsername(username);
-
-	    System.out.println("DB user=" + user);
-
-	    model.addAttribute("user", user);
-
-	    return "profile";
+		UsersEntity user = (UsersEntity) session.getAttribute("loginUser");
+		
+		if(user == null) {
+			return "redirect:/login";
+		}
+		
+		model.addAttribute("user" , user);
+		
+		return "profile";
 	}
 	
 	@PostMapping("/updateProfile")
@@ -52,12 +48,8 @@ public class ProfileController {
 	        @RequestParam("photo") MultipartFile photo,
 	        HttpSession session) throws IOException {
 
-	    String loginUser =
-	        (String)session.getAttribute("loginUser");
-
-	    UsersEntity user =
-	        usersRepository.findByUsername(loginUser);
-
+		UsersEntity user = (UsersEntity)session.getAttribute("loginUser");
+		
 	    user.setUsername(username);
 	    user.setEmail(email);
 
@@ -83,8 +75,7 @@ public class ProfileController {
 
 	    usersRepository.save(user);
 
-	    session.setAttribute("loginUser",
-	            username);
+	    session.setAttribute("loginUser", user);
 
 	    return "redirect:/profile?success=true";
 	}
@@ -97,9 +88,7 @@ public class ProfileController {
 			HttpSession session,
 			Model model) {
 		
-		String username = (String)session.getAttribute("loginUser");
-		
-		UsersEntity user = usersRepository.findByUsername(username);
+		UsersEntity user = (UsersEntity)session.getAttribute("loginUser");
 		
 		// 驗證舊密碼
 	    if(!passwordEncoder.matches(
@@ -142,9 +131,7 @@ public class ProfileController {
 	@PostMapping("/deleteAccount")
 	public String deleteAccount(HttpSession session) {
 		
-		String username = (String)session.getAttribute("loginUser");
-		
-		UsersEntity user = usersRepository.findByUsername(username);
+		UsersEntity user = (UsersEntity)session.getAttribute("loginUser");
 		
 		usersRepository.delete(user);
 		

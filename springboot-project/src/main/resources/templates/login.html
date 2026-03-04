@@ -26,27 +26,36 @@
 <div class="card shadow-lg p-4 login-card">
     <h3 class="text-center mb-4">會員登入</h3>
 	
+	<div th:if="${param.deleteSuccess}"
+		id="deleteMsg"
+		class="alert alert-warning">
+		帳號已刪除
+	</div>
+	
 	<div th:if="${param.resetSuccess}"
 		 id="msg"	
 	     class="alert alert-success">
-		密碼重設成功
+		 密碼重設成功
 	</div>
 			
 	<!--密碼修改成功-->
 	<div th:if="${param.pwdSuccess}" 
 		 id="pwdMsg"
 		 class="alert alert-success">
-		密碼修改成功，請重新登入
+		 密碼修改成功，請重新登入
 	</div>
 	
     <!-- 登入失敗 -->
-    <div th:if="${param.error}" class="alert alert-danger">
-        帳號或密碼錯誤
+    <div th:if="${param.error}"
+	     class="alert alert-danger">
+         帳號或密碼錯誤
     </div>
 
     <!-- 登出成功 -->
-    <div th:if="${param.logout}" id="logoutMsg" class="alert alert-success">
-        已成功登出
+    <div th:if="${param.logout}"
+	     id="logoutMsg"
+		 class="alert alert-success">
+         已成功登出
     </div>
 
     <form th:action="@{/doLogin}" method="post">
@@ -76,32 +85,28 @@
 		<a th:href="@{/forgotPassword}">忘記密碼?</a>
 	</div>
 	
-	<div th:if="${param.deleteSuccess}"
-	class="alert alert-warning">
-
-	帳號已刪除
-
-	</div>
-	
-	
 </div>
 <script>
 
 setTimeout(function(){
 
-    let messages = ["msg","pwdMsg","logoutMsg"];
+    let messages = ["msg","pwdMsg","logoutMsg","deleteMsg"];
 
     messages.forEach(function(id){
 
         let el = document.getElementById(id);
 
         if(el){
-            el.style.display = "none";
-        }
-
+			el.style.transition="opacity 1s";
+            el.style.opacity = "0";
+			
+			setTimeout(function(){
+				el.style.display = "none";				
+			},1000);
+		}
     });
 
-},3000);
+},2000);
 
 </script>
 </body>
