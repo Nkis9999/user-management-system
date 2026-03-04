@@ -76,6 +76,14 @@
 		<a th:href="@{/forgotPassword}">忘記密碼?</a>
 	</div>
 	
+	<div th:if="${param.deleteSuccess}"
+	class="alert alert-warning">
+
+	帳號已刪除
+
+	</div>
+	
+	
 </div>
 <script>
 

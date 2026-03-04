@@ -89,17 +89,6 @@ public class ProfileController {
 	    return "redirect:/profile?success=true";
 	}
 		
-//		// 更新資料
-//		user.setUsername(username);
-//		user.setEmail(email);
-//		
-//		usersRepository.save(user);
-//		
-//		// 更新 session
-//		session.setAttribute("loginUser", username);
-//		return "redirect:/profile?success=true";
-//	}
-	
 	@PostMapping("/changePassword")
 	public String changePassword(
 			String oldPassword, 
@@ -147,6 +136,21 @@ public class ProfileController {
 
 	    // 跳回登入頁並帶成功訊息
 	    return "redirect:/login?pwdSuccess=true";
+	}
+	
+	// 刪除帳號
+	@PostMapping("/deleteAccount")
+	public String deleteAccount(HttpSession session) {
+		
+		String username = (String)session.getAttribute("loginUser");
+		
+		UsersEntity user = usersRepository.findByUsername(username);
+		
+		usersRepository.delete(user);
+		
+		session.invalidate();
+		
+		return "redirect:/login?deleteSuccess=true";
 	}
 	
 }
