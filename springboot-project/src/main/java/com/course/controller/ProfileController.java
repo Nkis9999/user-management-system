@@ -45,25 +45,19 @@ public class ProfileController {
     @PostMapping("/updateProfile")
     public String updateProfile(
             Authentication authentication,
-            @RequestParam String username,
             @RequestParam String email,
             @RequestParam("photo") MultipartFile photo)
             throws IOException {
 
-        String loginUsername =
-                authentication.getName();
+        String username = authentication.getName();
 
         UsersEntity user =
-                usersRepository.findByUsername(loginUsername);
+                usersRepository.findByUsername(username);
 
-        user.setUsername(username);
         user.setEmail(email);
 
         // 上傳圖片
         if(photo != null && !photo.isEmpty()){
-
-            String fileName =
-                    photo.getOriginalFilename();
 
             String path = "C:\\upload\\";
 
@@ -73,8 +67,15 @@ public class ProfileController {
                 dir.mkdirs();
             }
 
-            photo.transferTo(
-                    new File(path + fileName));
+            // 產生唯一檔名
+            String fileName =
+                    System.currentTimeMillis() + "_"
+                    + photo.getOriginalFilename();
+
+            File dest =
+                    new File(path + File.separator + fileName);
+
+            photo.transferTo(dest);
 
             user.setImgName(fileName);
         }

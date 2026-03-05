@@ -72,6 +72,10 @@ public class LoginService {
 	    user.setEmail(userVo.getEmail());
 	    
 	    user.setRole("USER");
+	    
+	    // 設定預設頭像
+	    user.setImgName("default-avatar.png");
+	    
 	    usersRepository.save(user);
 	    System.out.println("Service:"+ userVo);
 	    System.out.println(passwordEncoder);

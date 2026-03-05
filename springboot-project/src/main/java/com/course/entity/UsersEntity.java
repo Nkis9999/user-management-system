@@ -28,6 +28,17 @@ public class UsersEntity {
 
 	@Column(name = "role")
 	private String role;
+
+	public String getAvatarUrl(){
+
+	    if(imgName == null || imgName.isEmpty()){
+	        return "/images/default-avatar.png";
+	    }
+
+	    return "/upload/" + imgName;
+	}
+
 }
+
 
 

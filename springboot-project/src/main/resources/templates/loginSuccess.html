@@ -28,6 +28,15 @@ font-weight:bold;
 color:#1cc88a;
 }
 
+.avatar{
+width:120px;
+height:120px;
+border-radius:50%;
+object-fit:cover;
+display:block;
+margin:0 auto;
+}
+
 </style>
 
 </head>
@@ -37,6 +46,11 @@ color:#1cc88a;
 <div class="card shadow-lg p-4 card-box text-center">
 
 <h3 class="mb-3">登入成功</h3>
+
+<img class="avatar"
+     th:src="${user.imgName != null} ? 
+        @{/upload/{img}(img=${user.imgName})} : 
+        @{/images/default-avatar.png}">
 
 <div th:if="${param.noAuth}" style="color:red; margin:10px; font-weight:bold;">
 	❌ 沒有權限存取此頁面
