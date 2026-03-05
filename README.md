@@ -1,70 +1,208 @@
 # User Management System
 
-A Spring Boot User Management System built as a backend portfolio project.
+A **User Management System** built with **Spring Boot, Spring Security, Thymeleaf, and MySQL**.
+This project demonstrates a complete **CRUD user system with authentication, role-based authorization, and profile management**.
 
-## Tech Stack
+---
 
-* Java
+# 🚀 Features
+
+* User Registration
+* User Login / Logout
+* Password Encryption (BCrypt)
+* Role-Based Access Control
+
+  * ROLE_USER
+  * ROLE_ADMIN
+  * ROLE_SUPER_ADMIN
+* User Profile Management
+* Profile Image Upload
+* User CRUD (Create / Read / Update / Delete)
+* Spring Security Authentication
+* Thymeleaf Frontend UI
+* MySQL Database Integration
+
+---
+
+# 🧰 Tech Stack
+
+### Backend
+
+* Java 17+
 * Spring Boot
 * Spring Security
+* Spring Data JPA
+* Hibernate
+
+### Frontend
+
 * Thymeleaf
+* HTML / CSS
+* Bootstrap
+
+### Database
+
 * MySQL
+
+### Tools
+
+* Git
+* GitHub
 * Maven
 
-## Features
+---
 
-### Authentication
+# 📂 Project Structure
 
-* User Register
-* User Login
-* Password Encryption (BCrypt)
+```
+user-management-system
+│
+├── controller
+│   ├── LoginController
+│   ├── UserController
+│
+├── service
+│   ├── LoginService
+│   ├── UserService
+│
+├── repository
+│   ├── UserRepository
+│
+├── entity
+│   ├── User
+│
+├── security
+│   ├── SecurityConfig
+│
+├── templates
+│   ├── login.html
+│   ├── register.html
+│   ├── profile.html
+│
+└── application.properties
+```
 
-### Authorization
+---
 
-* ROLE_USER
-* ROLE_ADMIN
-* ROLE_SUPER_ADMIN
+# 🔐 Spring Security
 
-### User Management
+This project uses **Spring Security** for authentication and authorization.
 
-* Profile page
-* Change password
-* Upload avatar
+Security Features:
 
-### Security
-
-* Spring Security authentication
+* Login Authentication
+* Password Encryption using **BCrypt**
 * Role-based access control
+* Secure endpoints
 
-## How to Run
+Example:
 
-Clone the project
+```
+ROLE_USER
+ROLE_ADMIN
+ROLE_SUPER_ADMIN
+```
+
+---
+
+# 🗄 Database Schema
+
+Example `users` table:
+
+| id | username | password  | email                                   | img_name    |
+| -- | -------- | --------- | --------------------------------------- | ----------- |
+| 1  | admin    | encrypted | [admin@mail.com](mailto:admin@mail.com) | profile.jpg |
+
+Password is stored using **BCrypt hashing**.
+
+---
+
+# 📦 Installation
+
+### 1️⃣ Clone the repository
 
 ```
 git clone https://github.com/Nkis9999/user-management-system.git
 ```
 
-Run Spring Boot
+---
+
+### 2️⃣ Open project
+
+Open with:
+
+* IntelliJ IDEA
+* Eclipse
+* VS Code
+
+---
+
+### 3️⃣ Configure Database
+
+Edit:
 
 ```
-mvn spring-boot:run
+application.properties
 ```
 
-Open browser
+Example:
+
+```
+spring.datasource.url=jdbc:mysql://localhost:3306/userdb
+spring.datasource.username=root
+spring.datasource.password=yourpassword
+```
+
+---
+
+### 4️⃣ Run the project
+
+Run:
+
+```
+SpringBootApplication
+```
+
+Then open:
 
 ```
 http://localhost:8080
 ```
 
-## Future Improvements
+---
 
-* Email verification
-* Admin sidebar
-* User search
+# 🖼 Screenshots
+
+You can add screenshots here.
+
+Example:
+
+```
+/images/login.png
+/images/register.png
+/images/profile.png
+```
+
+---
+
+# 🎯 Future Improvements
+
+* Admin Dashboard
 * Pagination
-* REST API version
+* Search Users
+* API version (REST API)
+* JWT Authentication
+* Docker Deployment
 
-## Author
+---
 
-GitHub
+# 👨‍💻 Author
+
+GitHub:
 https://github.com/Nkis9999
+
+---
+
+# ⭐ If you like this project
+
+Give it a **Star ⭐ on GitHub**!
