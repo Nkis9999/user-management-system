@@ -66,8 +66,18 @@ public class ProfileController {
             if(!dir.exists()){
                 dir.mkdirs();
             }
-
-            // 產生唯一檔名
+            
+            // 刪除舊照片
+            if(user.getImgName() != null && !user.getImgName().equals("default-avatar.png")) {
+            	
+            	File oldFile = new File(path + user.getImgName());
+            	
+            	if(oldFile.exists()) {
+            		oldFile.delete();
+            	}
+            }
+            
+            // 產生新檔名
             String fileName =
                     System.currentTimeMillis() + "_"
                     + photo.getOriginalFilename();
@@ -76,8 +86,8 @@ public class ProfileController {
                     new File(path + File.separator + fileName);
 
             photo.transferTo(dest);
-
-            user.setImgName(fileName);
+            
+            user.setImgName(fileName); // DB 更新
         }
 
         usersRepository.save(user);
@@ -141,7 +151,21 @@ public class ProfileController {
 
         UsersEntity user =
                 usersRepository.findByUsername(username);
-
+        
+        String path = "C:\\upload\\";
+        
+        // 刪除頭像
+        if(user.getImgName() != null && 
+        		!user.getImgName().equals("default-avatar.png")) {
+        	
+        	File file = new File(path + user.getImgName());
+        	
+        	if(file.exists()) {
+        		file.delete();
+        	}
+        }
+        
+        // 刪除帳號
         usersRepository.delete(user);
 
         return "redirect:/login?deleteSuccess=true";
