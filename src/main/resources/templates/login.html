@@ -50,7 +50,19 @@
 	     class="alert alert-danger">
          帳號或密碼錯誤
     </div>
-
+	
+	<!-- Email 尚未驗證 -->
+	<div th:if="${param.error == 'email'}" class="alert alert-danger">
+	Email 尚未驗證
+	<br>
+	<a th:href="@{/resend}">重新寄送驗證信</a>
+	</div>
+	
+	<!-- Email 驗證成功 -->
+	<div th:if="${param.verified}" class="alert alert-success">
+	Email 驗證成功，請登入
+	</div>
+	
     <!-- 登出成功 -->
     <div th:if="${param.logout}"
 	     id="logoutMsg"

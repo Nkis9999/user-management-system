@@ -31,6 +31,7 @@ public class SecurityConfig {
     			"/login",
     			"/doLogin",
 	    	    "/register",
+	    	    "/verify",
 	    	    "/forgotPassword",
 	            "/resetPassword",
 	            "/css/**",

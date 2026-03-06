@@ -1,9 +1,9 @@
 package com.course.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +27,12 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
 
+        // Email 未驗證就攔截不讓登入
+        if(Boolean.FALSE.equals(user.getVerified())){
+            throw new RuntimeException("Email not verified");
+        }
+        
+        
         return User.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())

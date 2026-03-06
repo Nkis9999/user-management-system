@@ -29,11 +29,9 @@ public class LoginService {
 	//---- 登入
 	public boolean checkLogin(UserVo userVo) {
 
-	    System.out.println("username="
-	            + userVo.getUsername());
+	    System.out.println("username=" + userVo.getUsername());
 
-	    System.out.println("password="
-	            + userVo.getPassword());
+	    System.out.println("password=" + userVo.getPassword());
 
 	    UsersEntity user =
 	        usersRepository.findByUsername(
@@ -43,9 +41,15 @@ public class LoginService {
 	        System.out.println("查無帳號");
 	        return false;
 	    }
-
-	    System.out.println("DB password="
-	            + user.getPassword());
+	    
+	    // 先檢查 Email 是否驗證
+	    if(!user.getVerified()) {
+	    	System.out.println("Email 尚未驗證");
+	    	return false;
+	    }
+	    
+//	    System.out.println("DB password="
+//	            + user.getPassword());
 
 	    boolean result =
 	        passwordEncoder.matches(
@@ -54,12 +58,6 @@ public class LoginService {
 
 	    System.out.println("matches="+result);
 	    
-	    // 密碼正確後檢查 Email 是否驗證
-	    if(result && !user.getVerified()) {
-	    	System.out.println("Email 尚未驗證");
-	    	return false;
-	    }
-
 	    return result;
 	}
 	
@@ -95,13 +93,19 @@ public class LoginService {
 	    
 	    usersRepository.save(user);
 	    
-	    String verifyLink = "http://localhost:8080/verify?token=" + token;
-	    
 	    // 寄驗證信
+	    String verifyLink = "http://localhost:8080/verify?token=" + token;
+
+	    String html = """
+	    <h2>Email Verification</h2>
+	    <p>Please verify your email:</p>
+	    <a href="%s">Click here to verify</a>
+	    """.formatted(verifyLink);
+
 	    emailService.sendEmail(
-				user.getEmail() , 
-				"Email Verification" , 
-	    		"Please verify your email.");
+	            user.getEmail(),
+	            "Email Verification",
+	            html);
 	    
 	    System.out.println("Service:"+ userVo);
 	    System.out.println(passwordEncoder);
@@ -126,14 +130,54 @@ public class LoginService {
 		if(user == null) {
 			return false;
 		}
+		// 檢查 token 是否過期
+		if(user.getTokenExpireTime().isBefore(LocalDateTime.now())) {
+			return false;
+		}
+		
+		// 設定已驗證
+		user.setVerified(true);
 		
 		user.setVerified(true);
 		user.setVerificationToken(null);
+		user.setTokenExpireTime(null);
 		
 		usersRepository.save(user);
 		
 		return true;
 	}
 	
+	public void resendVerificationEmail(String email) {
+		
+		UsersEntity user = usersRepository.findByEmail(email);
+		
+		if(user == null) {
+			return;
+		}
+		
+		if(user.getVerified()) {
+			return;
+		}
+		
+		String token = UUID.randomUUID().toString();
+		
+		user.setVerificationToken(token);
+		user.setTokenExpireTime(LocalDateTime.now().plusHours(1));
+		
+		usersRepository.save(user);
+		
+		String link = "http://localhost:8080/verify?token=" + token;
+
+		String html = """
+		<h2>Email Verification</h2>
+		<p>Please verify your email:</p>
+		<a href="%s">Click here to verify</a>
+		""".formatted(link);
+
+		emailService.sendEmail(
+		        user.getEmail(),
+		        "Email Verification",
+		        html);
+	};
 	
 }

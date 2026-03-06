@@ -167,8 +167,6 @@ public class LoginController {
     	return "redirect:/users";
     }
 	    
-    
-    
     // 顯示註冊頁
     @GetMapping("/register")
     public String registerPage() {
