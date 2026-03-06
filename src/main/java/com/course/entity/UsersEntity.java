@@ -29,6 +29,11 @@ public class UsersEntity {
 	@Column(name = "role")
 	private String role;
 
+	// Email驗證
+	private Boolean verified = false;
+	
+	private String verificationToken;
+	
 	public String getAvatarUrl(){
 
 	    if(imgName == null 

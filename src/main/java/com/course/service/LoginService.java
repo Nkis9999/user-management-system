@@ -20,6 +20,9 @@ public class LoginService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+	@Autowired
+	private EmailService emailService;
+	
 	//---- 登入
 	public boolean checkLogin(UserVo userVo) {
 
@@ -47,6 +50,12 @@ public class LoginService {
 	            user.getPassword());
 
 	    System.out.println("matches="+result);
+	    
+	    // 密碼正確後檢查 Email 是否驗證
+	    if(result && !user.getVerified()) {
+	    	System.out.println("Email 尚未驗證");
+	    	return false;
+	    }
 
 	    return result;
 	}
@@ -54,9 +63,6 @@ public class LoginService {
 	// 註冊
 	public boolean registerUser(UserVo userVo) {
 
-		// 改用 email 檢查
-//		UsersEntity exisUser = usersRepository.findByEmail(userVo.getEmail());
-		
 		// 以 Username 去檢查
 	    UsersEntity existUser = usersRepository.findByUsername(userVo.getUsername());
 	    
@@ -73,10 +79,20 @@ public class LoginService {
 	    
 	    user.setRole("USER");
 	    
+	    // Email 驗證預設
+	    user.setVerified(false);
+	    
 	    // 設定預設頭像
 	    user.setImgName("default-avatar.png");
 	    
 	    usersRepository.save(user);
+	    
+	    // 寄驗證信
+	    emailService.sendEmail(
+				user.getEmail() , 
+				"Email Verification" , 
+	    		"Please verify your email.");
+	    
 	    System.out.println("Service:"+ userVo);
 	    System.out.println(passwordEncoder);
 	    return true;
@@ -92,6 +108,5 @@ public class LoginService {
 		usersRepository.save(user);
 		
 	}
-	
 	
 }
